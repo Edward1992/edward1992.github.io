@@ -1,5 +1,6 @@
 ---
 title: Docker 折腾小记
+date: 2017-10-30
 tag: [docker]
 ---
 
@@ -37,11 +38,8 @@ FROM registy.docker-cn.com/library/python:latest
 # Docker image file
 Docker 拉取或者本地创建的镜像都会存储单一的一个Docker.qcow2 文件当中。随着镜像的增多这个文件会变得越来越大。而且比较 buggy 的是即使你删除了一些镜像，这个Docker.qcow2也不会随之减小。
 
-![screenshot1](https://github.com/Edward1992/edward1992.github.io/blob/master/image/2017/10/2017-10-30-5.01.08.png?raw=true)
-
-![screenshot2](https://github.com/Edward1992/edward1992.github.io/blob/master/image/2017/10/2017-10-30-5.01.20.png?raw=true)
-
-
+![screenshot2](/image/2017/10/2017-10-30-5.01.08.png)
+![screenshot2](/image/2017/10/2017-10-30-5.01.20.png)
 
 目前 docker 官方还没有要处理这个问题的迹象。我们用户现在能够做的就是简单删除掉这个.qcow2文件来优化存储空间。一个叫Théo Chamley的法国人为此写了一个[清理 Docker.qcow2的 bash 脚本](https://gist.github.com/MrTrustor/e690ba75cefe844086f5e7da909b35ce#file-clean-docker-for-mac-sh)。
 目前我也是定期看着 docker images 里镜像所占用的空间估摸着要不要跑跑这个清理脚本。
