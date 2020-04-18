@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang=zh>
 <head><meta name="generator" content="Hexo 3.9.0">
-  <meta charset="utf-8">
-  
-  <title>Docker 折腾小记 | Edward的技术笔记</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="docker 是个好东西。在本地开发时可以简化开发环境的配置流程。不过 docker 本身也需要一定的学习成本。折腾了好些时日，踩了几个坑。 国内镜像普通网络环境下访问 docker hub 上的镜像时网络会非常地慢。为此安装了 docker 以后首当其冲的就是配置国内的镜像。 国内的 docker 镜像仓库有ustc、daocloud、alicloud 还有官方源。尝试了几个选项后，果然">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="docker 是个好东西。在本地开发时可以简化开发环境的配置流程。不过 docker 本身也需要一定的学习成本。折腾了好些时日，踩了几个坑。 国内镜像普通网络环境下访问 docker hub 上的镜像时网络会非常地慢。为此安装了 docker 以后首当其冲的就是配置国内的镜像。 国内的 docker 镜像仓库有ustc、daocloud、alicloud 还有官方源。尝试了几个选项后，果然">
 <meta name="keywords" content="docker">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Docker 折腾小记">
@@ -20,77 +21,135 @@
 <meta name="twitter:title" content="Docker 折腾小记">
 <meta name="twitter:description" content="docker 是个好东西。在本地开发时可以简化开发环境的配置流程。不过 docker 本身也需要一定的学习成本。折腾了好些时日，踩了几个坑。 国内镜像普通网络环境下访问 docker hub 上的镜像时网络会非常地慢。为此安装了 docker 以后首当其冲的就是配置国内的镜像。 国内的 docker 镜像仓库有ustc、daocloud、alicloud 还有官方源。尝试了几个选项后，果然">
 <meta name="twitter:image" content="http://edward1992.github.io/image/2017/10/2017-10-30-5.01.08.png">
-  
-    <link rel="alternate" href="/atom.xml" title="Edward的技术笔记" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  
-    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  
-  <link rel="stylesheet" href="/css/style.css">
-  
-
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Docker 折腾小记</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
 </head>
-</html>
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Edward的技术笔记</a>
-      </h1>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/04/19/nsqd-main/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://edward1992.github.io/2017/10/30/docker-tips/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://edward1992.github.io/2017/10/30/docker-tips/&text=Docker 折腾小记"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://edward1992.github.io/2017/10/30/docker-tips/&title=Docker 折腾小记"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://edward1992.github.io/2017/10/30/docker-tips/&is_video=false&description=Docker 折腾小记"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Docker 折腾小记&body=Check out this article: http://edward1992.github.io/2017/10/30/docker-tips/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://edward1992.github.io/2017/10/30/docker-tips/&title=Docker 折腾小记"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://edward1992.github.io/2017/10/30/docker-tips/&title=Docker 折腾小记"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://edward1992.github.io/2017/10/30/docker-tips/&title=Docker 折腾小记"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://edward1992.github.io/2017/10/30/docker-tips/&title=Docker 折腾小记"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://edward1992.github.io/2017/10/30/docker-tips/&name=Docker 折腾小记&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://edward1992.github.io/2017/10/30/docker-tips/&t=Docker 折腾小记"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#国内镜像"><span class="toc-number">1.</span> <span class="toc-text">国内镜像</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Docker-image-file"><span class="toc-number">2.</span> <span class="toc-text">Docker image file</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Docker 折腾小记
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Edward的技术笔记</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-10-29T16:00:00.000Z" itemprop="datePublished">2017-10-30</time>
+        
       
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://edward1992.github.io"></form>
-      </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/docker/">docker</a>
     </div>
-  </div>
-</header>
-      <div class="outer">
-        <section id="main"><article id="post-docker-tips" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/10/30/docker-tips/" class="article-date">
-  <time datetime="2017-10-29T16:00:00.000Z" itemprop="datePublished">2017-10-30</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      Docker 折腾小记
-    </h1>
+
+
+    </div>
+  </header>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>docker 是个好东西。在本地开发时可以简化开发环境的配置流程。不过 docker 本身也需要一定的学习成本。折腾了好些时日，踩了几个坑。</p>
+  <div class="content" itemprop="articleBody">
+    <p>docker 是个好东西。在本地开发时可以简化开发环境的配置流程。不过 docker 本身也需要一定的学习成本。折腾了好些时日，踩了几个坑。</p>
 <h1 id="国内镜像"><a href="#国内镜像" class="headerlink" title="国内镜像"></a>国内镜像</h1><p>普通网络环境下访问 docker hub 上的镜像时网络会非常地慢。为此安装了 docker 以后首当其冲的就是配置国内的镜像。</p>
 <p>国内的 docker 镜像仓库有ustc、daocloud、alicloud 还有官方源。尝试了几个选项后，果然还是<a href="https://www.docker-cn.com/registry-mirror" target="_blank" rel="noopener">官方源</a>用起来最顺手。</p>
 <p>在 pull 镜像或者写 dockerfile 的时候，直接在镜像名前加上 docker-cn 的前缀就能从国内镜像源拉取了。</p>
@@ -104,121 +163,126 @@
 <p>目前 docker 官方还没有要处理这个问题的迹象。我们用户现在能够做的就是简单删除掉这个.qcow2文件来优化存储空间。一个叫Théo Chamley的法国人为此写了一个<a href="https://gist.github.com/MrTrustor/e690ba75cefe844086f5e7da909b35ce#file-clean-docker-for-mac-sh" target="_blank" rel="noopener">清理 Docker.qcow2的 bash 脚本</a>。<br>目前我也是定期看着 docker images 里镜像所占用的空间估摸着要不要跑跑这个清理脚本。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Copyright 2017 Théo Chamley</span></span><br><span class="line"><span class="comment"># Permission is hereby granted, free of charge, to any person obtaining a copy of </span></span><br><span class="line"><span class="comment"># this software and associated documentation files (the "Software"), to deal in the Software</span></span><br><span class="line"><span class="comment"># without restriction, including without limitation the rights to use, copy, modify, merge,</span></span><br><span class="line"><span class="comment"># publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons</span></span><br><span class="line"><span class="comment"># to whom the Software is furnished to do so, subject to the following conditions:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># The above copyright notice and this permission notice shall be included in all copies or</span></span><br><span class="line"><span class="comment"># substantial portions of the Software.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING</span></span><br><span class="line"><span class="comment"># BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND</span></span><br><span class="line"><span class="comment"># NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,</span></span><br><span class="line"><span class="comment"># DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span></span><br><span class="line"></span><br><span class="line">IMAGES=<span class="variable">$@</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"This will remove all your current containers and images except for:"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;IMAGES&#125;</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Are you sure? [yes/NO] "</span> -n 1 -r</span><br><span class="line"><span class="built_in">echo</span>    <span class="comment"># (optional) move to a new line</span></span><br><span class="line"><span class="keyword">if</span> [[ ! <span class="variable">$REPLY</span> =~ ^[Yy]$ ]]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">TMP_DIR=$(mktemp -d)</span><br><span class="line"></span><br><span class="line"><span class="built_in">pushd</span> <span class="variable">$TMP_DIR</span> &gt;/dev/null</span><br><span class="line"></span><br><span class="line">open -a Docker</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"=&gt; Saving the specified images"</span></span><br><span class="line"><span class="keyword">for</span> image <span class="keyword">in</span> <span class="variable">$&#123;IMAGES&#125;</span>; <span class="keyword">do</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"==&gt; Saving <span class="variable">$&#123;image&#125;</span>"</span></span><br><span class="line">	tar=$(<span class="built_in">echo</span> -n <span class="variable">$&#123;image&#125;</span> | base64)</span><br><span class="line">	docker save -o <span class="variable">$&#123;tar&#125;</span>.tar <span class="variable">$&#123;image&#125;</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"==&gt; Done."</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"=&gt; Cleaning up"</span></span><br><span class="line"><span class="built_in">echo</span> -n <span class="string">"==&gt; Quiting Docker"</span></span><br><span class="line">osascript -e <span class="string">'quit app "Docker"'</span></span><br><span class="line"><span class="keyword">while</span> docker info &gt;/dev/null 2&gt;&amp;1; <span class="keyword">do</span></span><br><span class="line">	<span class="built_in">echo</span> -n <span class="string">"."</span></span><br><span class="line">	sleep 1</span><br><span class="line"><span class="keyword">done</span>;</span><br><span class="line"><span class="built_in">echo</span> <span class="string">""</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"==&gt; Removing Docker.qcow2 file"</span></span><br><span class="line">rm ~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux/Docker.qcow2</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"==&gt; Launching Docker"</span></span><br><span class="line">open -a Docker</span><br><span class="line"><span class="built_in">echo</span> -n <span class="string">"==&gt; Waiting for Docker to start"</span></span><br><span class="line">until docker info &gt;/dev/null 2&gt;&amp;1; <span class="keyword">do</span></span><br><span class="line">	<span class="built_in">echo</span> -n <span class="string">"."</span></span><br><span class="line">	sleep 1</span><br><span class="line"><span class="keyword">done</span>;</span><br><span class="line"><span class="built_in">echo</span> <span class="string">""</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"=&gt; Done."</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"=&gt; Loading saved images"</span></span><br><span class="line"><span class="keyword">for</span> image <span class="keyword">in</span> <span class="variable">$&#123;IMAGES&#125;</span>; <span class="keyword">do</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"==&gt; Loading <span class="variable">$&#123;image&#125;</span>"</span></span><br><span class="line">	tar=$(<span class="built_in">echo</span> -n <span class="variable">$&#123;image&#125;</span> | base64)</span><br><span class="line">	docker load -q -i <span class="variable">$&#123;tar&#125;</span>.tar || <span class="built_in">exit</span> 1</span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"==&gt; Done."</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">popd</span> &gt;/dev/null</span><br><span class="line">rm -r <span class="variable">$&#123;TMP_DIR&#125;</span></span><br></pre></td></tr></table></figure>
 
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://edward1992.github.io/2017/10/30/docker-tips/" data-id="ck965l53w0002hsrzhf50w34l" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
-
-    </footer>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2020/04/19/nsqd-main/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          nsqd的启动过程分析(基于 1.2.0 版本)
-        
-      </div>
-    </a>
-  
-  
-</nav>
-
-  
 </article>
 
-</section>
+
+
         
-          <aside id="sidebar">
-  
-    
+          <div id="footer-post-container">
+  <div id="footer-post">
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签</h3>
-    <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nsq/">nsq</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签云</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/nsq/" style="font-size: 10px;">nsq</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">归档</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">最新文章</h3>
-    <div class="widget">
+    <div id="nav-footer" style="display: none">
       <ul>
-        
-          <li>
-            <a href="/2020/04/19/nsqd-main/">nsqd的启动过程分析(基于 1.2.0 版本)</a>
-          </li>
-        
-          <li>
-            <a href="/2017/10/30/docker-tips/">Docker 折腾小记</a>
-          </li>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
         
       </ul>
     </div>
-  </div>
 
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 Edward Gao<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#国内镜像"><span class="toc-number">1.</span> <span class="toc-text">国内镜像</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Docker-image-file"><span class="toc-number">2.</span> <span class="toc-text">Docker image file</span></a></li></ol>
     </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://edward1992.github.io/2017/10/30/docker-tips/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://edward1992.github.io/2017/10/30/docker-tips/&text=Docker 折腾小记"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://edward1992.github.io/2017/10/30/docker-tips/&title=Docker 折腾小记"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://edward1992.github.io/2017/10/30/docker-tips/&is_video=false&description=Docker 折腾小记"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Docker 折腾小记&body=Check out this article: http://edward1992.github.io/2017/10/30/docker-tips/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://edward1992.github.io/2017/10/30/docker-tips/&title=Docker 折腾小记"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://edward1992.github.io/2017/10/30/docker-tips/&title=Docker 折腾小记"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://edward1992.github.io/2017/10/30/docker-tips/&title=Docker 折腾小记"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://edward1992.github.io/2017/10/30/docker-tips/&title=Docker 折腾小记"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://edward1992.github.io/2017/10/30/docker-tips/&name=Docker 折腾小记&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://edward1992.github.io/2017/10/30/docker-tips/&t=Docker 折腾小记"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    Edward Gao
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </nav>
   </div>
 </footer>
+
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
 </body>
 </html>
