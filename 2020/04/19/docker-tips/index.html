@@ -3,15 +3,23 @@
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
   
-  <title>Edward的技术笔记</title>
+  <title>Docker 折腾小记 | Edward的技术笔记</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Edward的技术笔记">
-<meta property="og:url" content="http://edward1992.github.io/index.html">
+  <meta name="description" content="docker 是个好东西。在本地开发时可以简化开发环境的配置流程。不过 docker 本身也需要一定的学习成本。折腾了好些时日，踩了几个坑。 国内镜像普通网络环境下访问 docker hub 上的镜像时网络会非常地慢。为此安装了 docker 以后首当其冲的就是配置国内的镜像。 国内的 docker 镜像仓库有ustc、daocloud、alicloud 还有官方源。尝试了几个选项后，果然">
+<meta name="keywords" content="docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker 折腾小记">
+<meta property="og:url" content="http://edward1992.github.io/2020/04/19/docker-tips/index.html">
 <meta property="og:site_name" content="Edward的技术笔记">
+<meta property="og:description" content="docker 是个好东西。在本地开发时可以简化开发环境的配置流程。不过 docker 本身也需要一定的学习成本。折腾了好些时日，踩了几个坑。 国内镜像普通网络环境下访问 docker hub 上的镜像时网络会非常地慢。为此安装了 docker 以后首当其冲的就是配置国内的镜像。 国内的 docker 镜像仓库有ustc、daocloud、alicloud 还有官方源。尝试了几个选项后，果然">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://github.com/Edward1992/edward1992.github.io/blob/master/image/2017/10/2017-10-30-5.01.08.png?raw=true">
+<meta property="og:image" content="https://github.com/Edward1992/edward1992.github.io/blob/master/image/2017/10/2017-10-30-5.01.20.png?raw=true">
+<meta property="og:updated_time" content="2020-04-18T21:40:20.765Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Edward的技术笔记">
+<meta name="twitter:title" content="Docker 折腾小记">
+<meta name="twitter:description" content="docker 是个好东西。在本地开发时可以简化开发环境的配置流程。不过 docker 本身也需要一定的学习成本。折腾了好些时日，踩了几个坑。 国内镜像普通网络环境下访问 docker hub 上的镜像时网络会非常地慢。为此安装了 docker 以后首当其冲的就是配置国内的镜像。 国内的 docker 镜像仓库有ustc、daocloud、alicloud 还有官方源。尝试了几个选项后，果然">
+<meta name="twitter:image" content="https://github.com/Edward1992/edward1992.github.io/blob/master/image/2017/10/2017-10-30-5.01.08.png?raw=true">
   
     <link rel="alternate" href="/atom.xml" title="Edward的技术笔记" type="application/atom+xml">
   
@@ -60,58 +68,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-nsqd-main" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/04/19/nsqd-main/" class="article-date">
-  <time datetime="2020-04-18T21:40:20.765Z" itemprop="datePublished">2020-04-19</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/04/19/nsqd-main/">nsqd的启动过程分析(基于 1.2.0 版本)</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>以 <a href="https://github.com/nsqio/nsq/releases/tag/v1.2.0" target="_blank" rel="noopener">1.2.0</a> 版本为准.</p>
-<p><a href="https://github.com/nsqio/nsq/blob/e7d872a9a8b562695be39b519eadce00771874eb/apps/nsqd/main.go#L41" target="_blank" rel="noopener">/apps/nsqd/main.go</a> 中的 <code>Start</code> 方法即是 nsqd daemon 的启动过程.</p>
-<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *program)</span> <span class="title">Start</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">  opts := nsqd.NewOptions()</span><br><span class="line">  </span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="comment">// ... </span></span><br><span class="line">  </span><br><span class="line">	nsqd, err := nsqd.New(opts)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		logFatal(<span class="string">"failed to instantiate nsqd - %s"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	p.nsqd = nsqd</span><br><span class="line"></span><br><span class="line">	err = p.nsqd.LoadMetadata()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		logFatal(<span class="string">"failed to load metadata - %s"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	err = p.nsqd.PersistMetadata()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		logFatal(<span class="string">"failed to persist metadata - %s"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		err := p.nsqd.Main()</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			p.Stop()</span><br><span class="line">			os.Exit(<span class="number">1</span>)</span><br><span class="line">		&#125;f</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在执行到 <code>p.nsqd.Main</code> 之前, nsqd 先调用了 <code>LoadMetadata</code> 和 <code>PersistMetadata</code> 方法, 以恢复上一次 nsqd 运行时保存的运行数据.</p>
-<p>下面来看看 <a href="https://github.com/nsqio/nsq/blob/e7d872a9a8b562695be39b519eadce00771874eb/nsqd/nsqd.go#L244" target="_blank" rel="noopener">/nsqd/nsqd.go</a> 中 <code>Main</code> 方法里的具体过程.</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(n *NSQD)</span> <span class="title">Main</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	ctx := &amp;context&#123;n&#125;</span><br><span class="line"></span><br><span class="line">	exitCh := <span class="built_in">make</span>(<span class="keyword">chan</span> error)</span><br><span class="line">	<span class="keyword">var</span> once sync.Once</span><br><span class="line">	exitFunc := <span class="function"><span class="keyword">func</span><span class="params">(err error)</span></span> &#123;</span><br><span class="line">		once.Do(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">				n.logf(LOG_FATAL, <span class="string">"%s"</span>, err)</span><br><span class="line">			&#125;</span><br><span class="line">			exitCh &lt;- err</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	n.tcpServer.ctx = ctx</span><br><span class="line">	n.waitGroup.Wrap(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		exitFunc(protocol.TCPServer(n.tcpListener, n.tcpServer, n.logf))</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	httpServer := newHTTPServer(ctx, <span class="literal">false</span>, n.getOpts().TLSRequired == TLSRequired)</span><br><span class="line">	n.waitGroup.Wrap(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		exitFunc(http_api.Serve(n.httpListener, httpServer, <span class="string">"HTTP"</span>, n.logf))</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> n.tlsConfig != <span class="literal">nil</span> &amp;&amp; n.getOpts().HTTPSAddress != <span class="string">""</span> &#123;</span><br><span class="line">		httpsServer := newHTTPServer(ctx, <span class="literal">true</span>, <span class="literal">true</span>)</span><br><span class="line">		n.waitGroup.Wrap(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			exitFunc(http_api.Serve(n.httpsListener, httpsServer, <span class="string">"HTTPS"</span>, n.logf))</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	n.waitGroup.Wrap(n.queueScanLoop)</span><br><span class="line">	n.waitGroup.Wrap(n.lookupLoop)</span><br><span class="line">	<span class="keyword">if</span> n.getOpts().StatsdAddress != <span class="string">""</span> &#123;</span><br><span class="line">		n.waitGroup.Wrap(n.statsdLoop)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	err := &lt;-exitCh</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>其中nsqd 创建了 <code>tcpServer</code> 和 <code>httpServer</code>. <code>tcpServer</code> 负责监听客户端的请求, <code>httpServer</code> 负责对外提供 <a href="https://nsq.io/components/nsqd.html#http-api" target="_blank" rel="noopener">api 服务</a>. 如果 nsqd 启动时有配置 https, 也会创建 <code>httpsServer</code>.</p>
-<p>另外还创建了 <code>queueScanLoop</code> 和 <code>lookupLoop</code> goroutine. <code>queueScanLoop</code> 是 nsqd 内部处理消息的定时任务, <code>lookupLoop</code> 是向 <code>nsqlookupd</code> 同步节点信息的定时任务.</p>
-<p>如果 nsqd 启动时还配置了 <strong>-statsd-address</strong> 参数, 会创建 <code>statsLoop</code> 的 goroutine. 负责定时推送这个 nsqd 进程的内存信息.</p>
-<p>以上这些服务都是以新的 goroutine 创建的, 这里采用了sync.WaitGroup这个同步工具. 这里 nsqd 对 WaitGroup 进行了一层包装.代码在<br><a href="https://github.com/nsqio/nsq/blob/e7d872a9a8/internal/util/wait_group_wrapper.go#L7" target="_blank" rel="noopener">/internal/util/wait_group_wrapper.go</a>.</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> WaitGroupWrapper <span class="keyword">struct</span> &#123;</span><br><span class="line">	sync.WaitGroup</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w *WaitGroupWrapper)</span> <span class="title">Wrap</span><span class="params">(cb <span class="keyword">func</span>()</span>)</span> &#123;</span><br><span class="line">	w.Add(<span class="number">1</span>)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		cb()</span><br><span class="line">		w.Done()</span><br><span class="line">	&#125;()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://edward1992.github.io/2020/04/19/nsqd-main/" data-id="ck965cyqy000050rzayb4esw1" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nsq/">nsq</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-tips" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-docker-tips" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/04/19/docker-tips/" class="article-date">
   <time datetime="2020-04-18T21:40:20.764Z" itemprop="datePublished">2020-04-19</time>
@@ -124,8 +81,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/04/19/docker-tips/">Docker 折腾小记</a>
+    <h1 class="article-title" itemprop="name">
+      Docker 折腾小记
     </h1>
   
 
@@ -159,10 +116,23 @@
     </footer>
   </div>
   
-</article>
-
+    
+<nav id="article-nav">
+  
+    <a href="/2020/04/19/nsqd-main/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          nsqd的启动过程分析(基于 1.2.0 版本)
+        
+      </div>
+    </a>
+  
+  
+</nav>
 
   
+</article>
 
 </section>
         
