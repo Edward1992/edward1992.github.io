@@ -1,254 +1,235 @@
 <!DOCTYPE html>
-<html>
+<html lang=zh>
 <head><meta name="generator" content="Hexo 3.9.0">
-  <meta charset="utf-8">
-  
-  <title>Edward的技术笔记</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta property="og:type" content="website">
 <meta property="og:title" content="Edward的技术笔记">
 <meta property="og:url" content="http://edward1992.github.io/index.html">
 <meta property="og:site_name" content="Edward的技术笔记">
 <meta property="og:locale" content="zh-CN">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Edward的技术笔记">
-  
-    <link rel="alternate" href="/atom.xml" title="Edward的技术笔记" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  
-    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  
-  <link rel="stylesheet" href="/css/style.css">
-  
-
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Edward的技术笔记</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
 </head>
-</html>
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Edward的技术笔记</a>
-      </h1>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4">
+        
+          <header id="header">
+  <a href="/">
+  
+    
+      <div id="logo" style="background-image: url(/images/logo.png);"></div>
+    
+  
+    <div id="title">
+      <h1>Edward的技术笔记</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+       
+        <li><a href="/">首页</a></li>
+       
+        <li><a href="/about/">关于</a></li>
+       
+        <li><a href="/archives/">归档</a></li>
+       
+        <li><a href="/projects_url">项目</a></li>
       
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://edward1992.github.io"></form>
-      </div>
-    </div>
+    </ul>
   </div>
 </header>
-      <div class="outer">
-        <section id="main">
-  
-    <article id="post-nsqd-main" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/04/19/nsqd-main/" class="article-date">
-  <time datetime="2020-04-18T21:44:37.746Z" itemprop="datePublished">2020-04-19</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
+
         
+        <section id="about">
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/04/19/nsqd-main/">nsqd的启动过程分析(基于 1.2.0 版本)</a>
-    </h1>
   
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>以 <a href="https://github.com/nsqio/nsq/releases/tag/v1.2.0" target="_blank" rel="noopener">1.2.0</a> 版本为准.</p>
-<p><a href="https://github.com/nsqio/nsq/blob/e7d872a9a8b562695be39b519eadce00771874eb/apps/nsqd/main.go#L41" target="_blank" rel="noopener">/apps/nsqd/main.go</a> 中的 <code>Start</code> 方法即是 nsqd daemon 的启动过程.</p>
-<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *program)</span> <span class="title">Start</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">  opts := nsqd.NewOptions()</span><br><span class="line">  </span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="comment">// ... </span></span><br><span class="line">  </span><br><span class="line">	nsqd, err := nsqd.New(opts)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		logFatal(<span class="string">"failed to instantiate nsqd - %s"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	p.nsqd = nsqd</span><br><span class="line"></span><br><span class="line">	err = p.nsqd.LoadMetadata()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		logFatal(<span class="string">"failed to load metadata - %s"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	err = p.nsqd.PersistMetadata()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		logFatal(<span class="string">"failed to persist metadata - %s"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		err := p.nsqd.Main()</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			p.Stop()</span><br><span class="line">			os.Exit(<span class="number">1</span>)</span><br><span class="line">		&#125;f</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在执行到 <code>p.nsqd.Main</code> 之前, nsqd 先调用了 <code>LoadMetadata</code> 和 <code>PersistMetadata</code> 方法, 以恢复上一次 nsqd 运行时保存的运行数据.</p>
-<p>下面来看看 <a href="https://github.com/nsqio/nsq/blob/e7d872a9a8b562695be39b519eadce00771874eb/nsqd/nsqd.go#L244" target="_blank" rel="noopener">/nsqd/nsqd.go</a> 中 <code>Main</code> 方法里的具体过程.</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(n *NSQD)</span> <span class="title">Main</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	ctx := &amp;context&#123;n&#125;</span><br><span class="line"></span><br><span class="line">	exitCh := <span class="built_in">make</span>(<span class="keyword">chan</span> error)</span><br><span class="line">	<span class="keyword">var</span> once sync.Once</span><br><span class="line">	exitFunc := <span class="function"><span class="keyword">func</span><span class="params">(err error)</span></span> &#123;</span><br><span class="line">		once.Do(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">				n.logf(LOG_FATAL, <span class="string">"%s"</span>, err)</span><br><span class="line">			&#125;</span><br><span class="line">			exitCh &lt;- err</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	n.tcpServer.ctx = ctx</span><br><span class="line">	n.waitGroup.Wrap(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		exitFunc(protocol.TCPServer(n.tcpListener, n.tcpServer, n.logf))</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	httpServer := newHTTPServer(ctx, <span class="literal">false</span>, n.getOpts().TLSRequired == TLSRequired)</span><br><span class="line">	n.waitGroup.Wrap(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		exitFunc(http_api.Serve(n.httpListener, httpServer, <span class="string">"HTTP"</span>, n.logf))</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> n.tlsConfig != <span class="literal">nil</span> &amp;&amp; n.getOpts().HTTPSAddress != <span class="string">""</span> &#123;</span><br><span class="line">		httpsServer := newHTTPServer(ctx, <span class="literal">true</span>, <span class="literal">true</span>)</span><br><span class="line">		n.waitGroup.Wrap(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			exitFunc(http_api.Serve(n.httpsListener, httpsServer, <span class="string">"HTTPS"</span>, n.logf))</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	n.waitGroup.Wrap(n.queueScanLoop)</span><br><span class="line">	n.waitGroup.Wrap(n.lookupLoop)</span><br><span class="line">	<span class="keyword">if</span> n.getOpts().StatsdAddress != <span class="string">""</span> &#123;</span><br><span class="line">		n.waitGroup.Wrap(n.statsdLoop)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	err := &lt;-exitCh</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>其中nsqd 创建了 <code>tcpServer</code> 和 <code>httpServer</code>. <code>tcpServer</code> 负责监听客户端的请求, <code>httpServer</code> 负责对外提供 <a href="https://nsq.io/components/nsqd.html#http-api" target="_blank" rel="noopener">api 服务</a>. 如果 nsqd 启动时有配置 https, 也会创建 <code>httpsServer</code>.</p>
-<p>另外还创建了 <code>queueScanLoop</code> 和 <code>lookupLoop</code> goroutine. <code>queueScanLoop</code> 是 nsqd 内部处理消息的定时任务, <code>lookupLoop</code> 是向 <code>nsqlookupd</code> 同步节点信息的定时任务.</p>
-<p>如果 nsqd 启动时还配置了 <strong>-statsd-address</strong> 参数, 会创建 <code>statsLoop</code> 的 goroutine. 负责定时推送这个 nsqd 进程的内存信息.</p>
-<p>以上这些服务都是以新的 goroutine 创建的, 这里采用了sync.WaitGroup这个同步工具. 这里 nsqd 对 WaitGroup 进行了一层包装.代码在<br><a href="https://github.com/nsqio/nsq/blob/e7d872a9a8/internal/util/wait_group_wrapper.go#L7" target="_blank" rel="noopener">/internal/util/wait_group_wrapper.go</a>.</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> WaitGroupWrapper <span class="keyword">struct</span> &#123;</span><br><span class="line">	sync.WaitGroup</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w *WaitGroupWrapper)</span> <span class="title">Wrap</span><span class="params">(cb <span class="keyword">func</span>()</span>)</span> &#123;</span><br><span class="line">	w.Add(<span class="number">1</span>)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		cb()</span><br><span class="line">		w.Done()</span><br><span class="line">	&#125;()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://edward1992.github.io/2020/04/19/nsqd-main/" data-id="ck965l53p0000hsrztdtw3bt8" class="article-share-link">Share</a>
+    <p>
+      在这里找到我：
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nsq/">nsq</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-docker-tips" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/10/30/docker-tips/" class="article-date">
-  <time datetime="2017-10-29T16:00:00.000Z" itemprop="datePublished">2017-10-30</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
+      
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/30/docker-tips/">Docker 折腾小记</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
+          <a class="icon" target="_blank" rel="noopener" href="http://github.com/probberechts/cactus-dark">
+            <i class="fab fa-github"></i><!--
+      ---></a><!--
+    ---><!--
+    --->  
+        
       
-        <p>docker 是个好东西。在本地开发时可以简化开发环境的配置流程。不过 docker 本身也需要一定的学习成本。折腾了好些时日，踩了几个坑。</p>
-<h1 id="国内镜像"><a href="#国内镜像" class="headerlink" title="国内镜像"></a>国内镜像</h1><p>普通网络环境下访问 docker hub 上的镜像时网络会非常地慢。为此安装了 docker 以后首当其冲的就是配置国内的镜像。</p>
-<p>国内的 docker 镜像仓库有ustc、daocloud、alicloud 还有官方源。尝试了几个选项后，果然还是<a href="https://www.docker-cn.com/registry-mirror" target="_blank" rel="noopener">官方源</a>用起来最顺手。</p>
-<p>在 pull 镜像或者写 dockerfile 的时候，直接在镜像名前加上 docker-cn 的前缀就能从国内镜像源拉取了。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull registry.docker-cn.com/library/python:latest <span class="comment"># 命令行拉取</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FROM registy.docker-cn.com/library/python:latest</span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<p>也可以修改系统 <em>/etc/docker/daemon.json</em> 配置 docker 守护进程默认使用国内镜像源加速。</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"registry-mirrors"</span>: [<span class="string">"https://registry.docker-cn.com"</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><em>修改 daemon.json 时注意用户权限</em></p>
-<h1 id="Docker-image-file"><a href="#Docker-image-file" class="headerlink" title="Docker image file"></a>Docker image file</h1><p>Docker 拉取或者本地创建的镜像都会存储单一的一个Docker.qcow2 文件当中。随着镜像的增多这个文件会变得越来越大。而且比较 buggy 的是即使你删除了一些镜像，这个Docker.qcow2也不会随之减小。</p>
-<p><img src="/image/2017/10/2017-10-30-5.01.08.png" alt="screenshot2"><br><img src="/image/2017/10/2017-10-30-5.01.20.png" alt="screenshot2"></p>
-<p>目前 docker 官方还没有要处理这个问题的迹象。我们用户现在能够做的就是简单删除掉这个.qcow2文件来优化存储空间。一个叫Théo Chamley的法国人为此写了一个<a href="https://gist.github.com/MrTrustor/e690ba75cefe844086f5e7da909b35ce#file-clean-docker-for-mac-sh" target="_blank" rel="noopener">清理 Docker.qcow2的 bash 脚本</a>。<br>目前我也是定期看着 docker images 里镜像所占用的空间估摸着要不要跑跑这个清理脚本。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Copyright 2017 Théo Chamley</span></span><br><span class="line"><span class="comment"># Permission is hereby granted, free of charge, to any person obtaining a copy of </span></span><br><span class="line"><span class="comment"># this software and associated documentation files (the "Software"), to deal in the Software</span></span><br><span class="line"><span class="comment"># without restriction, including without limitation the rights to use, copy, modify, merge,</span></span><br><span class="line"><span class="comment"># publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons</span></span><br><span class="line"><span class="comment"># to whom the Software is furnished to do so, subject to the following conditions:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># The above copyright notice and this permission notice shall be included in all copies or</span></span><br><span class="line"><span class="comment"># substantial portions of the Software.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING</span></span><br><span class="line"><span class="comment"># BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND</span></span><br><span class="line"><span class="comment"># NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,</span></span><br><span class="line"><span class="comment"># DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span></span><br><span class="line"></span><br><span class="line">IMAGES=<span class="variable">$@</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"This will remove all your current containers and images except for:"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;IMAGES&#125;</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Are you sure? [yes/NO] "</span> -n 1 -r</span><br><span class="line"><span class="built_in">echo</span>    <span class="comment"># (optional) move to a new line</span></span><br><span class="line"><span class="keyword">if</span> [[ ! <span class="variable">$REPLY</span> =~ ^[Yy]$ ]]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">TMP_DIR=$(mktemp -d)</span><br><span class="line"></span><br><span class="line"><span class="built_in">pushd</span> <span class="variable">$TMP_DIR</span> &gt;/dev/null</span><br><span class="line"></span><br><span class="line">open -a Docker</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"=&gt; Saving the specified images"</span></span><br><span class="line"><span class="keyword">for</span> image <span class="keyword">in</span> <span class="variable">$&#123;IMAGES&#125;</span>; <span class="keyword">do</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"==&gt; Saving <span class="variable">$&#123;image&#125;</span>"</span></span><br><span class="line">	tar=$(<span class="built_in">echo</span> -n <span class="variable">$&#123;image&#125;</span> | base64)</span><br><span class="line">	docker save -o <span class="variable">$&#123;tar&#125;</span>.tar <span class="variable">$&#123;image&#125;</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"==&gt; Done."</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"=&gt; Cleaning up"</span></span><br><span class="line"><span class="built_in">echo</span> -n <span class="string">"==&gt; Quiting Docker"</span></span><br><span class="line">osascript -e <span class="string">'quit app "Docker"'</span></span><br><span class="line"><span class="keyword">while</span> docker info &gt;/dev/null 2&gt;&amp;1; <span class="keyword">do</span></span><br><span class="line">	<span class="built_in">echo</span> -n <span class="string">"."</span></span><br><span class="line">	sleep 1</span><br><span class="line"><span class="keyword">done</span>;</span><br><span class="line"><span class="built_in">echo</span> <span class="string">""</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"==&gt; Removing Docker.qcow2 file"</span></span><br><span class="line">rm ~/Library/Containers/com.docker.docker/Data/com.docker.driver.amd64-linux/Docker.qcow2</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"==&gt; Launching Docker"</span></span><br><span class="line">open -a Docker</span><br><span class="line"><span class="built_in">echo</span> -n <span class="string">"==&gt; Waiting for Docker to start"</span></span><br><span class="line">until docker info &gt;/dev/null 2&gt;&amp;1; <span class="keyword">do</span></span><br><span class="line">	<span class="built_in">echo</span> -n <span class="string">"."</span></span><br><span class="line">	sleep 1</span><br><span class="line"><span class="keyword">done</span>;</span><br><span class="line"><span class="built_in">echo</span> <span class="string">""</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"=&gt; Done."</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"=&gt; Loading saved images"</span></span><br><span class="line"><span class="keyword">for</span> image <span class="keyword">in</span> <span class="variable">$&#123;IMAGES&#125;</span>; <span class="keyword">do</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"==&gt; Loading <span class="variable">$&#123;image&#125;</span>"</span></span><br><span class="line">	tar=$(<span class="built_in">echo</span> -n <span class="variable">$&#123;image&#125;</span> | base64)</span><br><span class="line">	docker load -q -i <span class="variable">$&#123;tar&#125;</span>.tar || <span class="built_in">exit</span> 1</span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"==&gt; Done."</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">popd</span> &gt;/dev/null</span><br><span class="line">rm -r <span class="variable">$&#123;TMP_DIR&#125;</span></span><br></pre></td></tr></table></figure>
-
+        
+          <a class="icon" target="_blank" rel="noopener" href="/">
+            <i class="fab fa-twitter"></i><!--
+      ---></a><!--
+    ---><!--
+    --->  
+        
       
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://edward1992.github.io/2017/10/30/docker-tips/" data-id="ck965l53w0002hsrzhf50w34l" class="article-share-link">Share</a>
+        
+          <a class="icon" target="_blank" rel="noopener" href="/">
+            <i class="fab fa-facebook"></i><!--
+      ---></a><!--
+    ---><!--
+    --->  
+        
       
+        
+          <a class="icon" target="_blank" rel="noopener" href="/">
+            <i class="fab fa-linkedin"></i><!--
+      ---></a><!--
+    ---><!--
+    --->   
+        
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
-
-    </footer>
-  </div>
+        
+          <a class="icon" target="_blank" rel="noopener" href="mailto:name@email.com">
+            <i class="fas fa-envelope"></i><!--
+      ---></a><!--
+      ---><!--
+    --->.
+        
+      
+    </p>
   
-</article>
-
-
-  
-
 </section>
+
+<section id="writing">
+  <span class="h1"><a href="/archives">文章</a></span>
+  
+  <ul class="post-list">
+    
+    
+      
+    
+    
+      <li class="post-item">
         
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签</h3>
-    <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang/">golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nsq/">nsq</a></li></ul>
+    <div class="meta">
+      
+        
+          <time datetime="2020-04-18T21:44:37.746Z" itemprop="datePublished">2020-04-19</time>
+        
+      
     </div>
-  </div>
 
 
-  
+        <span>
     
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签云</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/nsq/" style="font-size: 10px;">nsq</a>
+        <a class="" href="/2020/04/19/nsqd-main/">nsqd的启动过程分析(基于 1.2.0 版本)</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2017-10-29T16:00:00.000Z" itemprop="datePublished">2017-10-30</time>
+        
+      
     </div>
-  </div>
 
-  
+
+        <span>
     
-  <div class="widget-wrap">
-    <h3 class="widget-title">归档</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li></ul>
-    </div>
-  </div>
-
-
-  
+        <a class="" href="/2017/10/30/docker-tips/">Docker 折腾小记</a>
     
-  <div class="widget-wrap">
-    <h3 class="widget-title">最新文章</h3>
-    <div class="widget">
+
+
+</span>
+      </li>
+    
+  </ul>
+  
+</section>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    Edward Gao
+  </div>
+  <div class="footer-right">
+    <nav>
       <ul>
-        
-          <li>
-            <a href="/2020/04/19/nsqd-main/">nsqd的启动过程分析(基于 1.2.0 版本)</a>
-          </li>
-        
-          <li>
-            <a href="/2017/10/30/docker-tips/">Docker 折腾小记</a>
-          </li>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
         
       </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 Edward Gao<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
-    </div>
+    </nav>
   </div>
 </footer>
+
     </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
 </body>
 </html>
