@@ -1,5 +1,5 @@
 ---
-title: nsqd的启动过程分析(基于 1.2.0 版本)
+title: nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)
 tag: [golang,nsq]
 ---
 

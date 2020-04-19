@@ -1,5 +1,5 @@
 ---
-title: nsqd 源码的数据结构分析 (基于 1.2.0 版本)
+title: nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)
 tag: [golang,nsq]
 ---
 
