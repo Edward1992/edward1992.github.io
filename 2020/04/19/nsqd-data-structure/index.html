@@ -9,15 +9,15 @@
     <meta name="description" content="以 1.2.0 版本为准. 涉及的数据结构 NSQD Topic Channel Message inFlightPqueue PriorityQueue diskQueue dummyBackendQueue  以上数据结构的关系如下图: NSQD/nsqd/nsqd.go12345678910111213141516171819202122232425262728293031323334353">
 <meta name="keywords" content="golang,nsq">
 <meta property="og:type" content="article">
-<meta property="og:title" content="nsqd 源码的数据结构分析 (基于 1.2.0 版本)">
+<meta property="og:title" content="nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)">
 <meta property="og:url" content="http://edward1992.github.io/2020/04/19/nsqd-data-structure/index.html">
 <meta property="og:site_name" content="Edward的技术笔记">
 <meta property="og:description" content="以 1.2.0 版本为准. 涉及的数据结构 NSQD Topic Channel Message inFlightPqueue PriorityQueue diskQueue dummyBackendQueue  以上数据结构的关系如下图: NSQD/nsqd/nsqd.go12345678910111213141516171819202122232425262728293031323334353">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://edward1992.github.io/image/2020/04/20/nsqd数据结构.png">
-<meta property="og:updated_time" content="2020-04-19T18:40:21.312Z">
+<meta property="og:updated_time" content="2020-04-19T22:52:52.334Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="nsqd 源码的数据结构分析 (基于 1.2.0 版本)">
+<meta name="twitter:title" content="nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)">
 <meta name="twitter:description" content="以 1.2.0 版本为准. 涉及的数据结构 NSQD Topic Channel Message inFlightPqueue PriorityQueue diskQueue dummyBackendQueue  以上数据结构的关系如下图: NSQD/nsqd/nsqd.go12345678910111213141516171819202122232425262728293031323334353">
 <meta name="twitter:image" content="http://edward1992.github.io/image/2020/04/20/nsqd数据结构.png">
     
@@ -39,7 +39,7 @@
         
     
     <!-- title -->
-    <title>nsqd 源码的数据结构分析 (基于 1.2.0 版本)</title>
+    <title>nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)</title>
     <!-- styles -->
     <link rel="stylesheet" href="/css/style.css">
     <!-- persian styles -->
@@ -86,16 +86,16 @@
     <div id="share" style="display: none">
       <ul>
   <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://edward1992.github.io/2020/04/19/nsqd-data-structure/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&text=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&is_video=false&description=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=nsqd 源码的数据结构分析 (基于 1.2.0 版本)&body=Check out this article: http://edward1992.github.io/2020/04/19/nsqd-data-structure/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&name=nsqd 源码的数据结构分析 (基于 1.2.0 版本)&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&t=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&text=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&is_video=false&description=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)&body=Check out this article: http://edward1992.github.io/2020/04/19/nsqd-data-structure/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&name=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&t=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -112,7 +112,7 @@
   <header>
     
     <h1 class="posttitle" itemprop="name headline">
-        nsqd 源码的数据结构分析 (基于 1.2.0 版本)
+        nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)
     </h1>
 
 
@@ -193,16 +193,16 @@
     <div id="share-footer" style="display: none">
       <ul>
   <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://edward1992.github.io/2020/04/19/nsqd-data-structure/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&text=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&is_video=false&description=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=nsqd 源码的数据结构分析 (基于 1.2.0 版本)&body=Check out this article: http://edward1992.github.io/2020/04/19/nsqd-data-structure/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&name=nsqd 源码的数据结构分析 (基于 1.2.0 版本)&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&t=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&text=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&is_video=false&description=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)&body=Check out this article: http://edward1992.github.io/2020/04/19/nsqd-data-structure/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&name=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&t=nsqd源码分析之nsqd 进程的数据结构 (基于 1.2.0 版本)"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

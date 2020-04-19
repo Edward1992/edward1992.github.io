@@ -9,14 +9,14 @@
     <meta name="description" content="以 1.2.0 版本为准. /apps/nsqd/main.go 中的 Start 方法即是 nsqd daemon 的启动过程. 12345678910111213141516171819202122232425262728293031func (p *program) Start() error &amp;#123;  opts := nsqd.NewOptions()  // ...// ...">
 <meta name="keywords" content="golang,nsq">
 <meta property="og:type" content="article">
-<meta property="og:title" content="nsqd的启动过程分析(基于 1.2.0 版本)">
+<meta property="og:title" content="nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)">
 <meta property="og:url" content="http://edward1992.github.io/2020/04/19/nsqd-main/index.html">
 <meta property="og:site_name" content="Edward的技术笔记">
 <meta property="og:description" content="以 1.2.0 版本为准. /apps/nsqd/main.go 中的 Start 方法即是 nsqd daemon 的启动过程. 12345678910111213141516171819202122232425262728293031func (p *program) Start() error &amp;#123;  opts := nsqd.NewOptions()  // ...// ...">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-04-18T23:04:11.192Z">
+<meta property="og:updated_time" content="2020-04-19T22:53:07.376Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="nsqd的启动过程分析(基于 1.2.0 版本)">
+<meta name="twitter:title" content="nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)">
 <meta name="twitter:description" content="以 1.2.0 版本为准. /apps/nsqd/main.go 中的 Start 方法即是 nsqd daemon 的启动过程. 12345678910111213141516171819202122232425262728293031func (p *program) Start() error &amp;#123;  opts := nsqd.NewOptions()  // ...// ...">
     
     
@@ -37,7 +37,7 @@
         
     
     <!-- title -->
-    <title>nsqd的启动过程分析(基于 1.2.0 版本)</title>
+    <title>nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)</title>
     <!-- styles -->
     <link rel="stylesheet" href="/css/style.css">
     <!-- persian styles -->
@@ -86,16 +86,16 @@
     <div id="share" style="display: none">
       <ul>
   <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://edward1992.github.io/2020/04/19/nsqd-main/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://edward1992.github.io/2020/04/19/nsqd-main/&text=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://edward1992.github.io/2020/04/19/nsqd-main/&is_video=false&description=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=nsqd的启动过程分析(基于 1.2.0 版本)&body=Check out this article: http://edward1992.github.io/2020/04/19/nsqd-main/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://edward1992.github.io/2020/04/19/nsqd-main/&name=nsqd的启动过程分析(基于 1.2.0 版本)&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://edward1992.github.io/2020/04/19/nsqd-main/&t=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://edward1992.github.io/2020/04/19/nsqd-main/&text=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://edward1992.github.io/2020/04/19/nsqd-main/&is_video=false&description=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)&body=Check out this article: http://edward1992.github.io/2020/04/19/nsqd-main/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://edward1992.github.io/2020/04/19/nsqd-main/&name=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://edward1992.github.io/2020/04/19/nsqd-main/&t=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -112,7 +112,7 @@
   <header>
     
     <h1 class="posttitle" itemprop="name headline">
-        nsqd的启动过程分析(基于 1.2.0 版本)
+        nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)
     </h1>
 
 
@@ -182,16 +182,16 @@
     <div id="share-footer" style="display: none">
       <ul>
   <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://edward1992.github.io/2020/04/19/nsqd-main/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://edward1992.github.io/2020/04/19/nsqd-main/&text=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://edward1992.github.io/2020/04/19/nsqd-main/&is_video=false&description=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=nsqd的启动过程分析(基于 1.2.0 版本)&body=Check out this article: http://edward1992.github.io/2020/04/19/nsqd-main/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://edward1992.github.io/2020/04/19/nsqd-main/&name=nsqd的启动过程分析(基于 1.2.0 版本)&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://edward1992.github.io/2020/04/19/nsqd-main/&t=nsqd的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://edward1992.github.io/2020/04/19/nsqd-main/&text=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://edward1992.github.io/2020/04/19/nsqd-main/&is_video=false&description=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)&body=Check out this article: http://edward1992.github.io/2020/04/19/nsqd-main/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-main/&title=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://edward1992.github.io/2020/04/19/nsqd-main/&name=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://edward1992.github.io/2020/04/19/nsqd-main/&t=nsqd源码分析之 nsqd 进程的启动过程分析(基于 1.2.0 版本)"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
