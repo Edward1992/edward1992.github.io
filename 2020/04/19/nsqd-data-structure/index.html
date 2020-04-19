@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="以 1.2.0 版本为准. 涉及的数据结构 NSQD Topic Channel Message inFlightPqueue PriorityQueue diskQueue dummyBackendQueue  以上数据结构的关系如下图: NSQD/nsqd/nsqd.go12345678910111213141516171819202122232425262728293031323334353">
+<meta name="keywords" content="golang,nsq">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nsqd 源码的数据结构分析 (基于 1.2.0 版本)">
+<meta property="og:url" content="http://edward1992.github.io/2020/04/19/nsqd-data-structure/index.html">
+<meta property="og:site_name" content="Edward的技术笔记">
+<meta property="og:description" content="以 1.2.0 版本为准. 涉及的数据结构 NSQD Topic Channel Message inFlightPqueue PriorityQueue diskQueue dummyBackendQueue  以上数据结构的关系如下图: NSQD/nsqd/nsqd.go12345678910111213141516171819202122232425262728293031323334353">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://edward1992.github.io/image/2020/04/20/nsqd数据结构.png">
+<meta property="og:updated_time" content="2020-04-19T18:40:21.312Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="nsqd 源码的数据结构分析 (基于 1.2.0 版本)">
+<meta name="twitter:description" content="以 1.2.0 版本为准. 涉及的数据结构 NSQD Topic Channel Message inFlightPqueue PriorityQueue diskQueue dummyBackendQueue  以上数据结构的关系如下图: NSQD/nsqd/nsqd.go12345678910111213141516171819202122232425262728293031323334353">
+<meta name="twitter:image" content="http://edward1992.github.io/image/2020/04/20/nsqd数据结构.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>nsqd 源码的数据结构分析 (基于 1.2.0 版本)</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2020/04/19/nsqd-main/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://edward1992.github.io/2020/04/19/nsqd-data-structure/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&text=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&is_video=false&description=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=nsqd 源码的数据结构分析 (基于 1.2.0 版本)&body=Check out this article: http://edward1992.github.io/2020/04/19/nsqd-data-structure/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&name=nsqd 源码的数据结构分析 (基于 1.2.0 版本)&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&t=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#涉及的数据结构"><span class="toc-number">1.</span> <span class="toc-text">涉及的数据结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSQD"><span class="toc-number">2.</span> <span class="toc-text">NSQD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Topic"><span class="toc-number">3.</span> <span class="toc-text">Topic</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Channel"><span class="toc-number">4.</span> <span class="toc-text">Channel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Message"><span class="toc-number">5.</span> <span class="toc-text">Message</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Queue"><span class="toc-number">6.</span> <span class="toc-text">Queue</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#inFlightPqueue"><span class="toc-number">6.0.1.</span> <span class="toc-text">inFlightPqueue</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#PriorityQueue"><span class="toc-number">6.0.2.</span> <span class="toc-text">PriorityQueue</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#BackendQueue"><span class="toc-number">6.0.3.</span> <span class="toc-text">BackendQueue</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#diskQueue"><span class="toc-number">6.0.3.1.</span> <span class="toc-text">diskQueue</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#dummyBackendQueue"><span class="toc-number">6.0.3.2.</span> <span class="toc-text">dummyBackendQueue</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        nsqd 源码的数据结构分析 (基于 1.2.0 版本)
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Edward的技术笔记</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-04-19T03:37:08.546Z" itemprop="datePublished">2020-04-19</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/golang/">golang</a>, <a class="tag-link" href="/tags/nsq/">nsq</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>以 <a href="https://github.com/nsqio/nsq/releases/tag/v1.2.0" target="_blank" rel="noopener">1.2.0</a> 版本为准.</p>
+<h2 id="涉及的数据结构"><a href="#涉及的数据结构" class="headerlink" title="涉及的数据结构"></a>涉及的数据结构</h2><ul>
+<li>NSQD</li>
+<li>Topic</li>
+<li>Channel</li>
+<li>Message</li>
+<li>inFlightPqueue</li>
+<li>PriorityQueue</li>
+<li>diskQueue</li>
+<li>dummyBackendQueue</li>
+</ul>
+<p>以上数据结构的关系如下图:<br><img src="/image/2020/04/20/nsqd数据结构.png" alt="nsqd 数据结构关系图"></p>
+<h2 id="NSQD"><a href="#NSQD" class="headerlink" title="NSQD"></a>NSQD</h2><p><a href="https://github.com/nsqio/nsq/blob/e7d872a9a8b562695be39b519eadce00771874eb/nsqd/nsqd.go#L44" target="_blank" rel="noopener">/nsqd/nsqd.go</a><br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> NSQD <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// 64bit atomic vars need to be first for proper alignment on 32bit platforms</span></span><br><span class="line">	clientIDSequence <span class="keyword">int64</span></span><br><span class="line"></span><br><span class="line">	sync.RWMutex</span><br><span class="line"></span><br><span class="line">	opts atomic.Value</span><br><span class="line"></span><br><span class="line">	dl        *dirlock.DirLock</span><br><span class="line">	isLoading <span class="keyword">int32</span></span><br><span class="line">	errValue  atomic.Value</span><br><span class="line">	startTime time.Time</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 这里有 Topic</span></span><br><span class="line">	<span class="comment">// one</span></span><br><span class="line">	topicMap <span class="keyword">map</span>[<span class="keyword">string</span>]*Topic</span><br><span class="line"></span><br><span class="line">	clientLock sync.RWMutex</span><br><span class="line">	clients    <span class="keyword">map</span>[<span class="keyword">int64</span>]Client</span><br><span class="line"></span><br><span class="line">	lookupPeers atomic.Value</span><br><span class="line"></span><br><span class="line">	tcpServer     *tcpServer</span><br><span class="line">	tcpListener   net.Listener</span><br><span class="line">	httpListener  net.Listener</span><br><span class="line">	httpsListener net.Listener</span><br><span class="line">	tlsConfig     *tls.Config</span><br><span class="line"></span><br><span class="line">	poolSize <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">	notifyChan           <span class="keyword">chan</span> <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">	optsNotificationChan <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">	exitChan             <span class="keyword">chan</span> <span class="keyword">int</span></span><br><span class="line">	waitGroup            util.WaitGroupWrapper</span><br><span class="line"></span><br><span class="line">	ci *clusterinfo.ClusterInfo</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Topic"><a href="#Topic" class="headerlink" title="Topic"></a>Topic</h2><p><a href="https://github.com/nsqio/nsq/blob/e7d872a9a8b562695be39b519eadce00771874eb/nsqd/topic.go#L17" target="_blank" rel="noopener">/nsqd/topic.go</a><br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Topic <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// 64bit atomic vars need to be first for proper alignment on 32bit platforms</span></span><br><span class="line">	messageCount <span class="keyword">uint64</span></span><br><span class="line">	messageBytes <span class="keyword">uint64</span></span><br><span class="line"></span><br><span class="line">	sync.RWMutex</span><br><span class="line"></span><br><span class="line">	name              <span class="keyword">string</span></span><br><span class="line">	channelMap        <span class="keyword">map</span>[<span class="keyword">string</span>]*Channel</span><br><span class="line">	backend           BackendQueue</span><br><span class="line">	memoryMsgChan     <span class="keyword">chan</span> *Message</span><br><span class="line">	startChan         <span class="keyword">chan</span> <span class="keyword">int</span></span><br><span class="line">	exitChan          <span class="keyword">chan</span> <span class="keyword">int</span></span><br><span class="line">	channelUpdateChan <span class="keyword">chan</span> <span class="keyword">int</span></span><br><span class="line">	waitGroup         util.WaitGroupWrapper</span><br><span class="line">	exitFlag          <span class="keyword">int32</span></span><br><span class="line">	idFactory         *guidFactory</span><br><span class="line"></span><br><span class="line">	ephemeral      <span class="keyword">bool</span></span><br><span class="line">	deleteCallback <span class="function"><span class="keyword">func</span><span class="params">(*Topic)</span></span></span><br><span class="line">	deleter        sync.Once</span><br><span class="line"></span><br><span class="line">	paused    <span class="keyword">int32</span></span><br><span class="line">	pauseChan <span class="keyword">chan</span> <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">	ctx *context</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Channel"><a href="#Channel" class="headerlink" title="Channel"></a>Channel</h2><p><a href="https://github.com/nsqio/nsq/blob/e7d872a9a8b562695be39b519eadce00771874eb/nsqd/channel.go#L36" target="_blank" rel="noopener">/nsqd/channel.go</a><br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Channel represents the concrete type for a NSQ channel (and also</span></span><br><span class="line"><span class="comment">// implements the Queue interface)</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// There can be multiple channels per topic, each with there own unique set</span></span><br><span class="line"><span class="comment">// of subscribers (clients).</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Channels maintain all client and message metadata, orchestrating in-flight</span></span><br><span class="line"><span class="comment">// messages, timeouts, requeuing, etc.</span></span><br><span class="line"><span class="keyword">type</span> Channel <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// 64bit atomic vars need to be first for proper alignment on 32bit platforms</span></span><br><span class="line">	requeueCount <span class="keyword">uint64</span></span><br><span class="line">	messageCount <span class="keyword">uint64</span></span><br><span class="line">	timeoutCount <span class="keyword">uint64</span></span><br><span class="line"></span><br><span class="line">	sync.RWMutex</span><br><span class="line"></span><br><span class="line">	topicName <span class="keyword">string</span></span><br><span class="line">	name      <span class="keyword">string</span></span><br><span class="line">	ctx       *context</span><br><span class="line"></span><br><span class="line">	backend BackendQueue</span><br><span class="line"></span><br><span class="line">	memoryMsgChan <span class="keyword">chan</span> *Message</span><br><span class="line">	exitFlag      <span class="keyword">int32</span></span><br><span class="line">	exitMutex     sync.RWMutex</span><br><span class="line"></span><br><span class="line">	<span class="comment">// state tracking</span></span><br><span class="line">	clients        <span class="keyword">map</span>[<span class="keyword">int64</span>]Consumer</span><br><span class="line">	paused         <span class="keyword">int32</span></span><br><span class="line">	ephemeral      <span class="keyword">bool</span></span><br><span class="line">	deleteCallback <span class="function"><span class="keyword">func</span><span class="params">(*Channel)</span></span></span><br><span class="line">	deleter        sync.Once</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Stats tracking</span></span><br><span class="line">	e2eProcessingLatencyStream *quantile.Quantile</span><br><span class="line"></span><br><span class="line">	<span class="comment">// <span class="doctag">TODO:</span> these can be DRYd up</span></span><br><span class="line">	deferredMessages <span class="keyword">map</span>[MessageID]*pqueue.Item</span><br><span class="line">	deferredPQ       pqueue.PriorityQueue</span><br><span class="line">	deferredMutex    sync.Mutex</span><br><span class="line">	inFlightMessages <span class="keyword">map</span>[MessageID]*Message</span><br><span class="line">	inFlightPQ       inFlightPqueue</span><br><span class="line">	inFlightMutex    sync.Mutex</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Message"><a href="#Message" class="headerlink" title="Message"></a>Message</h2><p><a href="https://github.com/nsqio/nsq/blob/e7d872a9a8b562695be39b519eadce00771874eb/nsqd/message.go#L18" target="_blank" rel="noopener">/nsqd/message.go</a><br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Message <span class="keyword">struct</span> &#123;</span><br><span class="line">	ID        MessageID</span><br><span class="line">	Body      []<span class="keyword">byte</span></span><br><span class="line">	Timestamp <span class="keyword">int64</span></span><br><span class="line">	Attempts  <span class="keyword">uint16</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// for in-flight handling</span></span><br><span class="line">	deliveryTS time.Time</span><br><span class="line">	clientID   <span class="keyword">int64</span></span><br><span class="line">	pri        <span class="keyword">int64</span></span><br><span class="line">	index      <span class="keyword">int</span></span><br><span class="line">	deferred   time.Duration</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h2><h4 id="inFlightPqueue"><a href="#inFlightPqueue" class="headerlink" title="inFlightPqueue"></a>inFlightPqueue</h4><p><a href="https://github.com/nsqio/nsq/blob/e7d872a9a8b562695be39b519eadce00771874eb/nsqd/in_flight_pqueue.go#L3" target="_blank" rel="noopener">/nsqd/in_flight_pqueue.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> inFlightPqueue []*Message</span><br></pre></td></tr></table></figure>
+<h4 id="PriorityQueue"><a href="#PriorityQueue" class="headerlink" title="PriorityQueue"></a>PriorityQueue</h4><p><a href="https://github.com/nsqio/nsq/blob/e7d872a9a8b562695be39b519eadce00771874eb/internal/pqueue/pqueue.go#L7" target="_blank" rel="noopener">/internal/pqueue/pqueue.go</a><br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Item <span class="keyword">struct</span> &#123;</span><br><span class="line">	Value    <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">	Priority <span class="keyword">int64</span></span><br><span class="line">	Index    <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// this is a priority queue as implemented by a min heap</span></span><br><span class="line"><span class="comment">// ie. the 0th element is the *lowest* value</span></span><br><span class="line"><span class="keyword">type</span> PriorityQueue []*Item</span><br></pre></td></tr></table></figure></p>
+<h4 id="BackendQueue"><a href="#BackendQueue" class="headerlink" title="BackendQueue"></a>BackendQueue</h4><p><a href="https://github.com/nsqio/nsq/blob/e7d872a9a8b562695be39b519eadce00771874eb/nsqd/backend_queue.go#L5" target="_blank" rel="noopener">/nsqd/backend_queue.go</a><br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// BackendQueue represents the behavior for the secondary message</span></span><br><span class="line"><span class="comment">// storage system</span></span><br><span class="line"><span class="keyword">type</span> BackendQueue <span class="keyword">interface</span> &#123;</span><br><span class="line">	Put([]<span class="keyword">byte</span>) error</span><br><span class="line">	ReadChan() &lt;-<span class="keyword">chan</span> []<span class="keyword">byte</span> <span class="comment">// this is expected to be an *unbuffered* channel</span></span><br><span class="line">	Close() error</span><br><span class="line">	Delete() error</span><br><span class="line">	Depth() <span class="keyword">int64</span></span><br><span class="line">	Empty() error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="diskQueue"><a href="#diskQueue" class="headerlink" title="diskQueue"></a>diskQueue</h5><p><a href="https://github.com/nsqio/go-diskqueue/blob/74cfbc9de8399a7fa86d676b908b002120826fc0/diskqueue.go#L58" target="_blank" rel="noopener">/diskqueue.go</a><br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// diskQueue implements a filesystem backed FIFO queue</span></span><br><span class="line"><span class="keyword">type</span> diskQueue <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// 64bit atomic vars need to be first for proper alignment on 32bit platforms</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// run-time state (also persisted to disk)</span></span><br><span class="line">	readPos      <span class="keyword">int64</span></span><br><span class="line">	writePos     <span class="keyword">int64</span></span><br><span class="line">	readFileNum  <span class="keyword">int64</span></span><br><span class="line">	writeFileNum <span class="keyword">int64</span></span><br><span class="line">	depth        <span class="keyword">int64</span></span><br><span class="line"></span><br><span class="line">	sync.RWMutex</span><br><span class="line"></span><br><span class="line">	<span class="comment">// instantiation time metadata</span></span><br><span class="line">	name            <span class="keyword">string</span></span><br><span class="line">	dataPath        <span class="keyword">string</span></span><br><span class="line">	maxBytesPerFile <span class="keyword">int64</span> <span class="comment">// currently this cannot change once created</span></span><br><span class="line">	minMsgSize      <span class="keyword">int32</span></span><br><span class="line">	maxMsgSize      <span class="keyword">int32</span></span><br><span class="line">	syncEvery       <span class="keyword">int64</span>         <span class="comment">// number of writes per fsync</span></span><br><span class="line">	syncTimeout     time.Duration <span class="comment">// duration of time per fsync</span></span><br><span class="line">	exitFlag        <span class="keyword">int32</span></span><br><span class="line">	needSync        <span class="keyword">bool</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// keeps track of the position where we have read</span></span><br><span class="line">	<span class="comment">// (but not yet sent over readChan)</span></span><br><span class="line">	nextReadPos     <span class="keyword">int64</span></span><br><span class="line">	nextReadFileNum <span class="keyword">int64</span></span><br><span class="line"></span><br><span class="line">	readFile  *os.File</span><br><span class="line">	writeFile *os.File</span><br><span class="line">	reader    *bufio.Reader</span><br><span class="line">	writeBuf  bytes.Buffer</span><br><span class="line"></span><br><span class="line">	<span class="comment">// exposed via ReadChan()</span></span><br><span class="line">	readChan <span class="keyword">chan</span> []<span class="keyword">byte</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// internal channels</span></span><br><span class="line">	depthChan         <span class="keyword">chan</span> <span class="keyword">int64</span></span><br><span class="line">	writeChan         <span class="keyword">chan</span> []<span class="keyword">byte</span></span><br><span class="line">	writeResponseChan <span class="keyword">chan</span> error</span><br><span class="line">	emptyChan         <span class="keyword">chan</span> <span class="keyword">int</span></span><br><span class="line">	emptyResponseChan <span class="keyword">chan</span> error</span><br><span class="line">	exitChan          <span class="keyword">chan</span> <span class="keyword">int</span></span><br><span class="line">	exitSyncChan      <span class="keyword">chan</span> <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">	logf AppLogFunc</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="dummyBackendQueue"><a href="#dummyBackendQueue" class="headerlink" title="dummyBackendQueue"></a>dummyBackendQueue</h5><p><a href="https://github.com/nsqio/nsq/blob/e7d872a9a8b562695be39b519eadce00771874eb/nsqd/dummy_backend_queue.go#L3" target="_blank" rel="noopener">/nsqd/dummy_backend_queue.go</a><br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> dummyBackendQueue <span class="keyword">struct</span> &#123;</span><br><span class="line">	readChan <span class="keyword">chan</span> []<span class="keyword">byte</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#涉及的数据结构"><span class="toc-number">1.</span> <span class="toc-text">涉及的数据结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NSQD"><span class="toc-number">2.</span> <span class="toc-text">NSQD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Topic"><span class="toc-number">3.</span> <span class="toc-text">Topic</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Channel"><span class="toc-number">4.</span> <span class="toc-text">Channel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Message"><span class="toc-number">5.</span> <span class="toc-text">Message</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Queue"><span class="toc-number">6.</span> <span class="toc-text">Queue</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#inFlightPqueue"><span class="toc-number">6.0.1.</span> <span class="toc-text">inFlightPqueue</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#PriorityQueue"><span class="toc-number">6.0.2.</span> <span class="toc-text">PriorityQueue</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#BackendQueue"><span class="toc-number">6.0.3.</span> <span class="toc-text">BackendQueue</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#diskQueue"><span class="toc-number">6.0.3.1.</span> <span class="toc-text">diskQueue</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#dummyBackendQueue"><span class="toc-number">6.0.3.2.</span> <span class="toc-text">dummyBackendQueue</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://edward1992.github.io/2020/04/19/nsqd-data-structure/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&text=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&is_video=false&description=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=nsqd 源码的数据结构分析 (基于 1.2.0 版本)&body=Check out this article: http://edward1992.github.io/2020/04/19/nsqd-data-structure/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&title=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&name=nsqd 源码的数据结构分析 (基于 1.2.0 版本)&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://edward1992.github.io/2020/04/19/nsqd-data-structure/&t=nsqd 源码的数据结构分析 (基于 1.2.0 版本)"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    Edward Gao
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<!-- clipboard -->
+
+  <script src="/lib/clipboard/clipboard.min.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
