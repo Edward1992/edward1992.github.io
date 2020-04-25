@@ -261,3 +261,12 @@ type dummyBackendQueue struct {
 	readChan chan []byte
 }
 ```
+
+### 
+
+NSQ 处理的消息流被称为 Topic.每个Topic 可以对应多个 Channel.客户端通过 Channel 订阅消息 Message.一个 Topic 可以向多个 Channel 发布同一则 Message.
+
+Topic和 Channel 都是即用即创建,当Producer  向NSQ 注册某个命名Topic 或某个 Consumer 订阅某个Topic 下的 Channel 时,nsqd进程才会创建对应的 Topic对象.
+
+当客户端向 nsqd 进程订阅某个 topic 下的 channel 时,这个 channel 才会被 nsqd 进程创建.
+ 
